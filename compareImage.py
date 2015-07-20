@@ -22,8 +22,9 @@ from PIL import Image
 from optparse import OptionParser
 import os, sys
 
-COMP = "_01"
-APP  = "_02"
+DEL = '_'
+COMP = "01"
+APP  = "02"
 
 EXT = "png"
 
@@ -112,10 +113,10 @@ class CompareImages:
         path = self._DIR
 
         filesOvl   = [os.path.join(path, r) for r in os.listdir(path) if r.split('.')[-1] == "png"]
-        files = set(['_'.join(r.split('_')[:-1]) for r in filesOvl])
+        files = set([DEL.join(r.split(DEL)[:-1]) for r in filesOvl])
         for filename in files:
-            sr = filename + '.'.join([COMP, EXT])
-            tr = filename + '.'.join([APP, EXT])
+            sr = filename + '.'.join([DEL + COMP, EXT])
+            tr = filename + '.'.join([DEL + APP, EXT])
             if sr not in filesOvl:
                 sys.stderr.write("")
             if tr not in filesOvl:
