@@ -55,6 +55,14 @@ def optSettings():
             default = "r"
             )
 
+    parser.add_option(
+            "-o", "--out",
+            action = "store",
+            dest = "out",
+            type = str,
+            default = "out"
+            )
+
     return parser.parse_args()
 
 class CompareImages:
@@ -66,12 +74,14 @@ class CompareImages:
             sys.stderr.write("[WARNING] " + self._COLOR + " does not match the format. Therefore, use the default value. format: r, red, g, green, b, blue\n")
             self._COLOR = 'r'
 
-        self._DIR    = args[0]
+        self._OUTDIR    = options.out
+        self._INDIR     = args[0]
 
     def checkImage(self, srName, trName):
         loose = self._LOOSE
         rev = self._REV
         color = self._COLOR
+        outDir = self._OUTDIR
 
         srData = Image.open(srName)
         trData = Image.open(trName)
@@ -107,20 +117,22 @@ class CompareImages:
 
         rs = Image.new("RGB", srData.size)
         rs.putdata(rsList)
-        rs.save("result.png")
+
+        if not os.path.exists(outDir):
+            os.makedirs(outDir)
+
+        rs.save(os.path.join(outDir, DEL.join(srName.split(DEL)[:-1] + ["result."]).split('/')[-1]) + EXT)
 
     def compareImages(self):
-        path = self._DIR
+        path = self._INDIR
 
-        filesOvl   = [os.path.join(path, r) for r in os.listdir(path) if r.split('.')[-1] == "png"]
+        filesOvl   = [os.path.join(path, r) for r in os.listdir(path) if r.split('.')[-1] == EXT]
         files = set([DEL.join(r.split(DEL)[:-1]) for r in filesOvl])
         for filename in files:
             sr = filename + '.'.join([DEL + COMP, EXT])
             tr = filename + '.'.join([DEL + APP, EXT])
-            if sr not in filesOvl:
-                sys.stderr.write("")
-            if tr not in filesOvl:
-                sys.stderr.write("")
+            if sr not in filesOvl or tr not in filesOvl:
+                sys.stderr.write("[WARNING] " + sr + " or " + tr + " does not exist. skip this file.")
             else:
                 self.checkImage(sr, tr)
 
