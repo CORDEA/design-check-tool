@@ -25,7 +25,7 @@ import os, sys
 COMP = "_01"
 APP  = "_02"
 
-EXT = ".png"
+EXT = "png"
 
 def optSettings():
     usage = ""
@@ -42,7 +42,7 @@ def optSettings():
 
     parser.add_option(
             "-r", "--reversal",
-            action = "store_false",
+            action = "store_true",
             dest = "reversal",
             )
 
@@ -65,8 +65,7 @@ class CompareImages:
             sys.stderr.write("[WARNING] " + self._COLOR + " does not match the format. Therefore, use the default value. format: r, red, g, green, b, blue\n")
             self._COLOR = 'r'
 
-        self._SOURCE    = args[0]
-        self._TARGET    = args[1]
+        self._DIR    = args[0]
 
     def checkImage(self, srName, trName):
         loose = self._LOOSE
@@ -102,25 +101,27 @@ class CompareImages:
                         elif color in ['b', "blue"]:
                             colorTpl = (0, 0, 255)
                         rsList.append(colorTpl)
-                else:
-                    rsList.append(srPix[j])
+            else:
+                rsList.append(srPix[j])
 
         rs = Image.new("RGB", srData.size)
         rs.putdata(rsList)
         rs.save("result.png")
 
-    def compareImages(path):
+    def compareImages(self):
+        path = self._DIR
+
         filesOvl   = [os.path.join(path, r) for r in os.listdir(path) if r.split('.')[-1] == "png"]
-        files = set([r.split("_")[0] for r in filesOvl])
+        files = set(['_'.join(r.split('_')[:-1]) for r in filesOvl])
         for filename in files:
-            sr = filename + COMP + EXT
-            tr = filename + APP + EXT
+            sr = filename + '.'.join([COMP, EXT])
+            tr = filename + '.'.join([APP, EXT])
             if sr not in filesOvl:
                 sys.stderr.write("")
             if tr not in filesOvl:
                 sys.stderr.write("")
             else:
-                checkImage(sr, tr)
+                self.checkImage(sr, tr)
 
     def checkSize(self, srSize, trData):
         srX, srY  = srSize
@@ -135,4 +136,6 @@ class CompareImages:
         return trData
 
 if __name__=='__main__':
-    compareImages(sys.argv[1])
+    options, args = optSettings()
+    ci = CompareImages(options, args)
+    ci.compareImages()
