@@ -18,7 +18,12 @@ __Author__ =  "Yoshihiro Tanaka"
 __date__   =  "2015-07-19"
 
 from PIL import Image
-import sys
+import os, sys
+
+COMP = "_01"
+APP  = "_02"
+
+EXT = ".png"
 
 def checkImage(srName, trName, loose=0):
     srData = Image.open(srName)
@@ -41,7 +46,8 @@ def checkImage(srName, trName, loose=0):
             if out:
                 tpl = list(srPix[j])
                 tpl[2] = 255
-                rsList.append(tuple(tpl))
+                # rsList.append(tuple(tpl))
+                rsList.append((255, 0, 0))
             else:
                 rsList.append(srPix[j])
         else:
@@ -49,7 +55,21 @@ def checkImage(srName, trName, loose=0):
 
     rs = Image.new("RGB", srData.size)
     rs.putdata(rsList)
-    rs.save("aaa.png")
+    rs.save("result.png")
+
+def compareImages(path):
+    filesOvl   = [os.path.join(path, r) for r in os.listdir(path) if r.split('.')[-1] == "png"]
+    files = set([r.split("_")[0] for r in filesOvl])
+    for filename in files:
+        sr = filename + COMP + EXT
+        tr = filename + APP + EXT
+        if sr not in filesOvl:
+            sys.stderr.write("")
+        if tr not in filesOvl:
+            sys.stderr.write("")
+        else:
+            checkImage(sr, tr)
 
 if __name__=='__main__':
-    checkImage(sys.argv[1], sys.argv[2])
+    compareImages(sys.argv[1])
+    # checkImage(sys.argv[1], sys.argv[2])
