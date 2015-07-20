@@ -7,7 +7,7 @@ Simple design check tool
 
 ## app
 
-<img src="test/main_01.png" width="400">
+<img src="test/main_02.png" width="400">
 
 ## compare
 
