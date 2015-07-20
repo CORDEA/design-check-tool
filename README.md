@@ -3,11 +3,11 @@ Simple design check tool
 
 ## comp
 
-![app](test/main_01.png)
+<img src="test/main_01.png" width="400">
 
 ## app
 
-![app](test/main_02.png)
+<img src="test/main_01.png" width="400">
 
 ## compare
 
@@ -17,4 +17,4 @@ python checkDesign.py test/ -o out
 
 ## result
 
-![res](out/main_result.png)
+<img src="out/main_result.png" width="400">
